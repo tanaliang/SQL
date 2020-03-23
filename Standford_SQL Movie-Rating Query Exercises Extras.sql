@@ -48,10 +48,10 @@ left outer join reviewer as re
 on re.rid = r.rid
 where name is 'Chris Jackson')
 
--- Q5. For all pairs of reviewers such that both reviewers gave a rating to the same movie, return the names of both reviewers. 
+/* Q5. For all pairs of reviewers such that both reviewers gave a rating to the same movie, return the names of both reviewers. 
        Eliminate duplicates, don't pair reviewers with themselves, and include each pair only once. 
        For each pair, return the names in the pair in alphabetical order.
-
+*/
 SELECT DISTINCT T2.NAME, T1.NAME
 FROM
 (Select title, max(name) as name 
@@ -98,8 +98,7 @@ on re.rid = r.rid
 group by title
 order by avg(stars) desc, title
 
--- Q8. Find the names of all reviewers who have contributed three or more ratings. 
-(As an extra challenge, try writing the query without HAVING or without COUNT.)
+-- Q8. Find the names of all reviewers who have contributed three or more ratings. (As an extra challenge, try writing the query without HAVING or without COUNT.)
 
 select ROW_NUMBER () OVER (partition by name order by name) as R, name, stars
 from movie as m
@@ -158,6 +157,7 @@ on m.mid = r.mid
 group by title))
 
 -- Q12. For each director, return the director's name together with the title(s) of the movie(s) they directed that received the highest rating among all of their movies, and the value of that rating. Ignore movies whose director is NULL.
+
 select director, title,max(stars) 
 from movie as m
 inner join 
