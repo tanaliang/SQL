@@ -100,12 +100,13 @@ order by avg(stars) desc, title
 
 -- Q8. Find the names of all reviewers who have contributed three or more ratings. (As an extra challenge, try writing the query without HAVING or without COUNT.)
 
-select ROW_NUMBER () OVER (partition by name order by name) as R, name, stars
-from movie as m
-inner join rating as r
-on m.mid = r.mid
-inner join reviewer as re
-on re.rid = r.rid
+select name 
+from reviewer 
+where rid in 
+(select rid 
+from rating as r
+group by rid
+having count(rid) >=3)
 
 -- Q9. Some directors directed more than one movie. For all such directors, return the titles of all movies directed by them, along with the director name. Sort by director name, then movie title. (As an extra challenge, try writing the query both with and without COUNT.)
 
