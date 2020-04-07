@@ -82,3 +82,68 @@ select t1.Country, t1.TotalSpent, t2.FirstName as FirstName, t2.LastName as Last
 from t1, t2
 where t1.Country = t2.Country and t1.TotalSpent = t2.spent
 ORDER BY TotalSpent DESC
+
+=======================================================================================================================
+
+Lesson 5 SQL Data Cleaning - Left & Right Quizzes
+
+/* Q1. In the accounts table, there is a column holding the website for each company. The last three digits specify what type of web address 
+they are using. A list of extensions (and pricing) is provided here. Pull these extensions and provide how many of each website 
+type exist in the accounts table.*/
+
+SELECT RIGHT(website, 3) AS Extension, COUNT(*)as C
+FROM accounts
+GROUP BY RIGHT(website, 3)
+
+
+/* Q2. There is much debate about how much the name (or even the first letter of a company name) matters. Use the accounts table 
+to pull the first letter of each company name to see the distribution of company names that begin with each letter (or number).*/
+
+select left(upper(name),1) as name, count(*) as C 
+from accounts
+group by left(upper(name),1)
+order by name
+
+
+/* Q3. Use the accounts table and a CASE statement to create two groups: one group of company names that start with a number and 
+a second group of those company names that start with a letter. What proportion of company names start with a letter?*/
+
+Select sum(letter)as L, sum(num) as N
+FROM 
+(
+	SELECT Left(UPPER(name), 1) AS N, 
+	CASE WHEN Left(UPPER(name), 1) in ('0','1','2','3','4','5','6','7','8','9') then 1 else 0 end as NUM, 
+	CASE WHEN Left(UPPER(name), 1) in 
+	('0','1','2','3','4','5','6','7','8','9') then 0
+	else 1 end as LETTER
+	FROM accounts
+) AS T1
+
+/* Q4. Consider vowels as a, e, i, o, and u. What proportion of company names start with a vowel, and what percent start with anything else?*/
+
+Select sum(V) as Vowels , sum(O) as Others , count(V) as Total
+from 
+(
+	Select name, Left(Upper(name),1) as L,
+	CASE WHEN Left(Upper(name),1) IN ('A','E','I','O','U') then 1 
+	else 0 end as V,
+	CASE WHEN Left(Upper(name),1) IN 
+	('A','E','I','O','U') then 0
+	else 1 end as O
+	from accounts
+) as t1
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
