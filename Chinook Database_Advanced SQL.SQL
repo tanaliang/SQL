@@ -85,7 +85,7 @@ ORDER BY TotalSpent DESC
 
 =======================================================================================================================
 
-Lesson 5 SQL Data Cleaning - Left & Right Quizzes
+Lesson 5 SQL Data Cleaning 
 
 /* Q1. In the accounts table, there is a column holding the website for each company. The last three digits specify what type of web address 
 they are using. A list of extensions (and pricing) is provided here. Pull these extensions and provide how many of each website 
@@ -134,16 +134,53 @@ from
 ) as t1
 
 
+/* Q5. Use the accounts table to create first and last name columns that hold the first and last names for the primary_poc.*/
+
+select primary_poc, STRPOS(primary_poc,' '), Left(primary_poc, STRPOS(primary_poc,' ')-1) as FirstName, Right(primary_poc, length(primary_poc)-STRPOS(primary_poc,' ')) as LastName
+from accounts
+
+/* Q6. Now see if you can do the same thing for every rep name in the sales_reps table. Again provide first and last name columns.*/
+
+select name, STRPOS(name,' '), Left(name, STRPOS(name,' ')-1) as FirstName, Right(name, length(name)-STRPOS(name,' ')) as LastName
+from sales_reps
 
 
+/* Q7. Each company in the accounts table wants to create an email address for each primary_poc. The email address should be the first name of the primary_poc . last name primary_poc @ company name .com.*/
 
+Select Left(primary_poc, STRPOS(primary_poc,' ')-1) as FirstName, Right(primary_poc, length(primary_poc)-STRPOS(primary_poc,' ')) as LastName, 
+Concat(Left(primary_poc, STRPOS(primary_poc,' ')-1),'.', 
+Right(primary_poc, length(primary_poc)-STRPOS(primary_poc,' ')),'@',name,'.com' ) as Email
+from accounts
 
+/* Q8. You may have noticed that in the previous solution some of the company names include spaces, 
+which will certainly not work in an email address. See if you can create an email address that will work by removing all of the spaces 
+in the account name, but otherwise your solution should be just as in question 1. Some helpful documentation is here.*/
 
+Select name, Replace(name,' ','') as Trim, concat(Left(primary_poc, STRPOS(primary_poc,' ')-1),'.', 
+Right(primary_poc, length(primary_poc)-STRPOS(primary_poc,' ')),'@',Replace(name,' ',''),'.com' ) as Email
+from accounts     
+      
+      
+/* Q9. We would also like to create an initial password, which they will change after their first log in. 
+The first password will be the first letter of the primary_poc's first name (lowercase), then the last letter of their first name 
+(lowercase), the first letter of their last name (lowercase), the last letter of their last name (lowercase), the number of letters 
+in their first name, the number of letters in their last name, and then the name of the company they are working with, all capitalized with no spaces.*/
 
-
-
-
-
-
-
-
+Select primary_poc, 
+LOWER(Left(primary_poc,1)) as First1, 
+LOWER(RIGHT(Left(primary_poc, STRPOS(primary_poc,' ')-1),1)) as First2,
+LOWER(Left(Right(primary_poc, length(primary_poc)-STRPOS(primary_poc,' ')),1)) as Last1,
+LOWER(Right(Right(primary_poc, length(primary_poc)-STRPOS(primary_poc,' ')),1)) as Last2, 
+LENGTH(Left(primary_poc, STRPOS(primary_poc,' ')-1)) AS CF, 
+LENGTH(Right(primary_poc, length(primary_poc)-STRPOS(primary_poc,' ')))as CL, 
+UPPER(Replace(name,' ','')) as CompanyName,
+CONCAT(
+LOWER(Left(primary_poc,1)), 
+LOWER(RIGHT(Left(primary_poc, STRPOS(primary_poc,' ')-1),1)),
+LOWER(Left(Right(primary_poc, length(primary_poc)-STRPOS(primary_poc,' ')),1)),
+LOWER(Right(Right(primary_poc, length(primary_poc)-STRPOS(primary_poc,' ')),1)), 
+LENGTH(Left(primary_poc, STRPOS(primary_poc,' ')-1)), 
+LENGTH(Right(primary_poc, length(primary_poc)-STRPOS(primary_poc,' '))), 
+UPPER(Replace(name,' ','')) 
+ ) AS PASSWORD
+from accounts
